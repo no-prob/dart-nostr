@@ -1,12 +1,9 @@
 import 'package:bip340/bip340.dart' as bip340;
-
-import '../../event.dart';
-import '../../utils.dart';
-import 'crypto.dart';
-
+import 'package:nostr/src/event.dart';
+import 'package:nostr/src/nips/nip_004/crypto.dart';
+import 'package:nostr/src/utils.dart';
 
 class EncryptedDirectMessage extends Event {
-
   static Map<String, List<List<int>>> gMapByteSecret = {};
 
   EncryptedDirectMessage(Event event)
@@ -42,21 +39,13 @@ class EncryptedDirectMessage extends Event {
 
   String? get receiverPubkey => findPubkey();
 
-  String? findPubkey() {
-    String prefix = "p";
-    for (List<String> tag in tags) {
-      if (tag.isNotEmpty && tag[0] == prefix && tag.length > 1) return tag[1];
-    }
-    return null;
-  }
-
   String getCiphertext(String senderPrivkey, String receiverPubkey) {
     String ciphertext =
         Nip4.cipher(senderPrivkey, '02$receiverPubkey', content);
     return ciphertext;
   }
 
-  String getPlaintext(String privkey, [String receiverPubkey=""]) {
+  String getPlaintext(String receiverPrivkey, [String receiverPubkey=""]) {
     String plaintext = "FAILED TO DECRYPT";
     int ivIndex = content.indexOf("?iv=");
     if( ivIndex <= 0) {
@@ -66,10 +55,18 @@ class EncryptedDirectMessage extends Event {
     String iv = content.substring(ivIndex + "?iv=".length, content.length);
     String encString = content.substring(0, ivIndex);
     try {
-      plaintext = Nip4.decrypt(privkey, "02" + pubkey, encString, iv);
+      return Nip4.decipher(receiverPrivkey, "02$pubkey", encString, iv);
     } catch(e) {
       print("Fail to decrypt: ${e}");
     }
     return plaintext;
+  }
+
+  String? findPubkey() {
+    String prefix = "p";
+    for (List<String> tag in tags) {
+      if (tag.isNotEmpty && tag[0] == prefix && tag.length > 1) return tag[1];
+    }
+    return null;
   }
 }

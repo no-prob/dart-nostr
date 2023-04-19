@@ -1,12 +1,9 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'dart:math';
-import 'package:bip340/bip340.dart' as bip340;
 import 'package:convert/convert.dart';
 import 'package:pointycastle/export.dart';
-
-import 'utils.dart';
-import 'settings.dart';
+import 'package:bip340/bip340.dart' as bip340;
+import 'package:nostr/src/utils.dart';
 
 /// The only object type that exists is the event, which has the following format on the wire:
 ///
@@ -264,7 +261,7 @@ class Event {
         .map((e) => (e as List<dynamic>).map((e) => e as String).toList())
         .toList();
 
-    Event event = Event(
+    return Event(
       json['id'],
       json['pubkey'],
       json['created_at'],
@@ -275,10 +272,9 @@ class Event {
       subscriptionId: subscriptionId,
       verify: verify,
     );
-    return event;
   }
 
-  factory Event.newEvent(
+  factory Event.quick(
     String content,
     String privkey,
   ) {
@@ -323,8 +319,9 @@ class Event {
     String content,
   ) {
     List data = [0, pubkey.toLowerCase(), createdAt, kind, tags, content];
-    String serializedEvent = jsonEncode(data);
-    Uint8List hash = SHA256Digest().process(Uint8List.fromList(utf8.encode(serializedEvent)));
+    String serializedEvent = json.encode(data);
+    Uint8List hash = SHA256Digest()
+        .process(Uint8List.fromList(utf8.encode(serializedEvent)));
     return hex.encode(hash);
   }
 
@@ -357,5 +354,4 @@ class Event {
       return false;
     }
   }
-
 }
