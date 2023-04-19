@@ -7,11 +7,11 @@ import 'package:convert/convert.dart';
 import '../../crypto/kepler.dart';
 
 
-class Nip04 {
+class Nip4 {
   static Map<String, List<List<int>>> gMapByteSecret = {};
 
   // Encrypt data using self private key in nostr format ( with trailing ?iv=)
-  static String encryptMessage( String privateString,
+  static String cipher( String privateString,
                            String publicString,
                            String plainText) {
     Uint8List uintInputText = Utf8Encoder().convert(plainText);
