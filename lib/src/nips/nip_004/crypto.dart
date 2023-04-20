@@ -103,4 +103,3 @@ class Nip4 {
     return Utf8Decoder().convert(result);
   }
 }
-
