@@ -23,7 +23,7 @@ class Message {
     switch (type) {
       case "EVENT":
         message = Event.deserialize(data);
-        if (message.kind == 4) message = EncryptedDirectMessage(message);
+        if (message.kind == 4) message = EncryptedDirectMessage.receive(message);
         break;
       case "EOSE":
         message = Eose.deserialize(data);

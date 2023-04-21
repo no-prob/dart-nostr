@@ -128,27 +128,26 @@ class Event {
     );
   }
 
-  /// Instantiate Event object from the minimum available data
+  /// Instantiate Event object from the minimum needed data
   ///
   /// ```dart
   ///Event event = Event.from(
   ///  kind: 1,
-  ///  tags: [],
   ///  content: "",
   ///  privkey:
   ///      "5ee1c8000ab28edd64d74a7d951ac2dd559814887b1b9e1ac7c5f89e96125c12",
   ///);
   ///```
   factory Event.from({
-    int createdAt = 0,
+    int? createdAt,
     required int kind,
-    required List<List<String>> tags,
+    List<List<String>> tags = const [],
     required String content,
     required String privkey,
     String? subscriptionId,
     bool verify = false,
   }) {
-    if (createdAt == 0) createdAt = currentUnixTimestampSeconds();
+    createdAt ??= currentUnixTimestampSeconds();
     final pubkey = bip340.getPublicKey(privkey).toLowerCase();
 
     final id = _processEventId(
