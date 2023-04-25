@@ -41,6 +41,8 @@ void main() {
       expect(event.pubkey, alicePubkey);
       expect(event.createdAt, 1680475069);
       expect(event.kind, 4);
+      expect(event.receiver, bobPubkey);
+      expect(event.sender, event.pubkey);
       expect(event.tags, [
         ["p", bobPubkey]
       ]);
