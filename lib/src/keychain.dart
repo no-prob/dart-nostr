@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:bip340/bip340.dart' as bip340;
 import 'package:dart_bech32/dart_bech32.dart';
 import 'package:nostr/src/utils.dart';
@@ -31,6 +32,19 @@ class Keychain {
       outputHex += word.toRadixString(16).padLeft(2, '0');
     }
     return Keychain(outputHex);
+  }
+
+  String get npub => hexToBech32('npub', public);
+
+  String get nsec => hexToBech32('nsec', private);
+
+  String hexToBech32(String prefix, String hexKey) {
+    List<int> data = [];
+    for (int i = 0; i < hexKey.length; i += 2) {
+      data.add(int.parse(hexKey.substring(i, i + 2), radix: 16));
+    }
+    final decoded = Decoded(prefix: prefix, words: bech32.toWords(Uint8List.fromList(data)));
+    return bech32.encode(decoded);
   }
 
   /// Instantiate a Keychain from random bytes
