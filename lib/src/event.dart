@@ -253,6 +253,9 @@ class Event {
       throw Exception('invalid input');
     }
 
+    if (json['tags'] is String) {
+      json['tags'] = jsonDecode(json['tags']);
+    }
     List<List<String>> tags = (json['tags'] as List<dynamic>)
         .map((e) => (e as List<dynamic>).map((e) => e as String).toList())
         .toList();
